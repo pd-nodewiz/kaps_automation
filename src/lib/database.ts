@@ -34,4 +34,34 @@ export async function getAllProfiles() {
     .select('*');
   
   return { profiles: data as Profile[] | null, error };
+}
+
+export async function testDatabaseConnection() {
+  try {
+    // Test database connection with a simple query
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('count()')
+      .limit(1);
+    
+    if (error) {
+      return { 
+        success: false, 
+        message: 'Database connection failed', 
+        error 
+      };
+    }
+    
+    return { 
+      success: true, 
+      message: 'Database connection successful',
+      data
+    };
+  } catch (error) {
+    return { 
+      success: false, 
+      message: 'Error testing connection', 
+      error 
+    };
+  }
 } 

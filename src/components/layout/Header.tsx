@@ -34,6 +34,9 @@ export default function Header({ user }: HeaderProps) {
                   Dashboard
                 </Link>
               )}
+              <Link href="/test-db" className="inline-flex items-center px-1 pt-1 text-gray-500 hover:text-gray-700">
+                Test DB
+              </Link>
             </nav>
           </div>
           <div className="flex items-center">
