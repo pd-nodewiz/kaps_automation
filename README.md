@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KAPS Automation
+
+A simple Next.js application with Supabase authentication and database integration, ready to be deployed on Vercel.
+
+## Features
+
+- Next.js 14 with App Router
+- Supabase authentication
+- Supabase database integration
+- TypeScript
+- Tailwind CSS
+- Vercel deployment ready
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18.17.0 or later
+- npm or yarn
+- Supabase account and project
+
+### Environment Setup
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://recryyhzwqipwvudfaxw.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+DATABASE_URL=postgresql://postgres:Kapsauto_99@db.recryyhzwqipwvudfaxw.supabase.co:5432/postgres
+```
+
+Replace `your-anon-key` and `your-service-role-key` with your actual Supabase keys.
+
+### Installation
 
 ```bash
+# Install dependencies
+npm install
+# or
+yarn install
+
+# Run the development server
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Supabase Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Log in to your Supabase account
+2. Create a new project with ID: `recryyhzwqipwvudfaxw`
+3. Enable email authentication in Auth settings
+4. Create a `profiles` table with the following schema:
 
-## Learn More
+```sql
+create table public.profiles (
+  id uuid references auth.users not null primary key,
+  email text not null,
+  role text not null,
+  created_at timestamp with time zone default now() not null
+);
 
-To learn more about Next.js, take a look at the following resources:
+-- Enable RLS and create security policies
+alter table public.profiles enable row level security;
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+create policy "Users can view their own profile"
+  on profiles for select
+  using (auth.uid() = id);
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+create policy "Users can update their own profile"
+  on profiles for update
+  using (auth.uid() = id);
+```
 
-## Deploy on Vercel
+### Admin Setup
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Navigate to `/admin/setup` in your application
+2. Create an admin user with email and password
+3. Use the admin credentials to log in at `/auth`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment on Vercel
+
+1. Push your code to a Git repository
+2. Connect your repository to Vercel
+3. Add the environment variables to your Vercel project settings
+4. Deploy
+
+## License
+
+This project is licensed under the MIT License.
